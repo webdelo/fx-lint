@@ -83,8 +83,12 @@ check_prerequisites() {
         error "GitHub CLI is not authenticated. Run: gh auth login"
     fi
 
-    # Check for uncommitted changes
-    if ! git diff-index --quiet HEAD -- 2>/dev/null; then
+    # Refresh index to avoid false positives from stale stat info
+    # (git diff-index can report changes when only mtime/inode differs)
+    git update-index --refresh >/dev/null 2>&1 || true
+
+    # Check for uncommitted changes (content-level, ignores stat-only diffs)
+    if [[ -n "$(git status --porcelain)" ]]; then
         error "You have uncommitted changes. Please commit or stash them first."
     fi
 
