@@ -1,0 +1,8 @@
+/task_management/
+/.claude/
+/.temp/
+bin/
+*.test
+coverage.*
+.idea/
+.vscode/
